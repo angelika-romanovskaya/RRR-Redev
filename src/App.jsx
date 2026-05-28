@@ -3,13 +3,11 @@ import reactLogo from './assets/react.svg'
 import viteLogo from './assets/vite.svg'
 import heroImg from './assets/hero.png'
 import './App.css'
-import { LifecycleComponent } from './components/LifecycleComponent'
-import { FuncLifecycleComponent } from './components/FuncLifecycleComponent'
+import {DogGallery} from './components/DogGallery'
 
 function App() {
   return <>
-    <LifecycleComponent/>
-    <FuncLifecycleComponent/>
+    <DogGallery/>
   </>
 }
 
