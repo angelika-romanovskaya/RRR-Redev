@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { UserInfoItem } from "./UserInfoItem";
 
 export const UserProfile = () => {
     const [user, setUser] = useState({
@@ -8,7 +9,11 @@ export const UserProfile = () => {
     });
 
     return <div>
-        <h2>Name: {user.name}, Age: {user.age}, Active: {user.isActive ? 'true' : 'false'}</h2>
+         <UserInfoItem
+            name={user.name}
+            age={user.age}
+            isActive={user.isActive}
+        />
 
         <button onClick={() => setUser(prevState => ({...prevState, name: prevState.name === 'Angelika' ? 'Иван' : "Angelika"}))}>Сменить имя</button>
         <button onClick={() => setUser(prevState => ({...prevState, age: prevState.age + 1}))}>Увеличить возраст</button>
