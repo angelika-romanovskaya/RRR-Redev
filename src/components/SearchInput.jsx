@@ -1,6 +1,7 @@
 import React from 'react';
+import withRenderTracker from './withRenderTracker';
 
-export const SearchInput = React.memo(({ value, onChange }) => {
+const SearchInput = ({ value, onChange }) => {
   return (
     <div>
       <input
@@ -12,4 +13,8 @@ export const SearchInput = React.memo(({ value, onChange }) => {
       />
     </div>
   );
-});
+};
+
+SearchInput.displayName = "SearchInput"
+
+export const SearchInputWithLogger = React.memo(withRenderTracker(SearchInput));

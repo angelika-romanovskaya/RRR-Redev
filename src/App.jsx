@@ -4,9 +4,9 @@ import viteLogo from './assets/vite.svg'
 import heroImg from './assets/hero.png'
 import './App.css'
 import { v4 as uuidv4 } from "uuid";
-import { CounterButton } from './components/CounterButton'
-import { SearchInput } from './components/SearchInput'
-import { ItemList } from './components/ItemList'
+import { CounterButtonWithLogger } from './components/CounterButton'
+import { SearchInputWithLogger } from './components/SearchInput'
+import { ItemListWithLogger } from './components/ItemList'
 
 const DATA_SET = Array.from({ length: 10 }, (_, index) => ({
   id: index + 1,
@@ -27,10 +27,10 @@ function App() {
 
   return (
     <div>
-      <CounterButton count={count} onIncrement={handleIncrement} />
-      <SearchInput value={searchTerm} onChange={handleSearchChange} />
+      <CounterButtonWithLogger count={count} onIncrement={handleIncrement} />
+      <SearchInputWithLogger value={searchTerm} onChange={handleSearchChange} />
       <h3>Список (Всего: {DATA_SET.length})</h3>
-      <ItemList items={DATA_SET} searchTerm={searchTerm} />
+      <ItemListWithLogger items={DATA_SET} searchTerm={searchTerm} />
     </div>
   )
 }

@@ -1,12 +1,17 @@
 import React from 'react';
+import withRenderTracker from './withRenderTracker';
 
-export const CounterButton = React.memo(({ count, onIncrement }) => {
+const CounterButton = ({ count, onIncrement, name }) => {
   return (
-    <button 
+    <button
       onClick={onIncrement}
     >
       Кликнут раз: {count}
     </button>
   );
-});
+};
+
+CounterButton.displayName = "CounterButton"
+
+export const CounterButtonWithLogger = React.memo(withRenderTracker(CounterButton));
 

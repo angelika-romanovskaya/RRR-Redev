@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
+import withRenderTracker from './withRenderTracker';
 
-export const ItemList = React.memo(({ items, searchTerm }) => {
+const ItemList = ({ items, searchTerm, name }) => {
   const filteredItems = useMemo(() => {
     if (!searchTerm) return items;
     const lowerSearch = searchTerm.toLowerCase();
@@ -22,4 +23,8 @@ export const ItemList = React.memo(({ items, searchTerm }) => {
       </ul>
     </div>
   );
-});
+};
+
+ItemList.displayName = "ItemList"
+
+export const ItemListWithLogger = React.memo(withRenderTracker(ItemList));
