@@ -1,38 +1,37 @@
-import { useCallback, useRef, useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
-import { v4 as uuidv4 } from "uuid";
-import { CounterButtonWithLogger } from './components/CounterButton'
-import { SearchInputWithLogger } from './components/SearchInput'
-import { ItemListWithLogger } from './components/ItemList'
+import React from "react";
+import { useLocalStorage } from "./hooks/useLocalStorage";
+import { ThemeSettings } from "./components/ThemeSettings";
+import { SearchUsers } from "./components/SearchUsers";
 
-const DATA_SET = Array.from({ length: 10 }, (_, index) => ({
-  id: index + 1,
-  text: `Элемент #${index + 1}`
-}));
+export default function App() {
+	const [theme] = useLocalStorage("app-theme", "light");
 
-function App() {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [count, setCount] = useState(0);
+	const appStyles = {
+		backgroundColor: theme === "dark" ? "#222" : "#fff",
+		color: theme === "dark" ? "#fff" : "#000",
+		minHeight: "100vh",
+		padding: "20px",
+		transition: "all 0.3s ease",
+		fontFamily: "sans-serif",
+	};
 
-   const handleSearchChange = useCallback((value) => {
-    setSearchTerm(value);
-  }, []);
+	return (
+		<div style={appStyles}>
+			<header
+				style={{
+					marginBottom: "20px",
+					borderBottom: "1px solid #ccc",
+					paddingBottom: "10px",
+				}}
+			>
+				<h1>React Custom Hooks Demo</h1>
+			</header>
 
-  const handleIncrement = useCallback(() => {
-    setCount(prevCount => prevCount + 1);
-  }, []);
+			<main style={{ maxWidth: "600px", margin: "0 auto" }}>
+				<ThemeSettings />
 
-  return (
-    <div>
-      <CounterButtonWithLogger count={count} onIncrement={handleIncrement} />
-      <SearchInputWithLogger value={searchTerm} onChange={handleSearchChange} />
-      <h3>Список (Всего: {DATA_SET.length})</h3>
-      <ItemListWithLogger items={DATA_SET} searchTerm={searchTerm} />
-    </div>
-  )
+				<SearchUsers />
+			</main>
+		</div>
+	);
 }
-
-export default App

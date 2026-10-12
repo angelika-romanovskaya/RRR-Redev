@@ -1,16 +1,84 @@
-# React + Vite
+# React Custom Hooks Project
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Репозиторий содержит набор универсальных кастомных хуков (`useLocalStorage`, `useDebounce`, `useFetch`) и примеры их интеграции в компоненты React для реализации живого поиска пользователей через GitHub API с поддержкой смены тем оформления.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 💡 Почему кастомные хуки помогают не дублировать логику?
 
-## React Compiler
+В React компоненты отвечают за две вещи: **отображение интерфейса (UI)** и **бизнес-логику (состояние, эффекты, запросы)**. Без кастомных хуков одинаковый код управления состоянием приходилось бы копировать из файла в файл.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Кастомные хуки решают проблему дублирования благодаря следующим преимуществам:
+1. **Изоляция и инкапсуляция логики:** Хук скрывает внутри себя сложные цепочки встроенных хуков (`useState`, `useEffect`). Компонент не знает, *как именно* данные сохраняются в `localStorage` или *как* очищается таймер дебаунса — он просто получает готовый результат в одну строку кода.
+2. **Переиспользуемость (Reusability):** Написав хук `useFetch` один раз, его можно использовать для загрузки пользователей, списка товаров, погоды или новостей в десятках разных компонентов. Меняется только передаваемый `url`.
+3. **Единая точка правки (Single Source of Truth):** Если логика работы с API изменится (например, потребуется добавить токен авторизации во все запросы), изменения вносятся только в один файл `useFetch.js`, а не по всему проекту.
+4. **Упрощение UI-компонентов:** Компоненты избавляются от «мусорного» кода, становятся декларативными, короткими и сфокусированными исключительно на рендеринге интерфейса.
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## 🛠️ Описание и примеры использования хуков
+
+### 1. `useLocalStorage(key, defaultValue)`
+**Описание:** Хук для синхронизации состояния React-компонента с хранилищем `localStorage` браузepa. При инициализации он автоматически считывает ранее сохраненное значение по ключу `key`, а при любом изменении состояния перезаписывает его в формате JSON.
+
+**Пример использования:**
+```javascript
+import { useLocalStorage } from './hooks/useLocalStorage';
+
+function SettingsComponent() {
+  // Создаем состояние, которое автоматически синхронизируется с localStorage
+  const [volume, setVolume] = useLocalStorage('sound-volume', 80);
+
+  return (
+    <div>
+      <p>Громкость: {volume}%</p>
+      <button onClick={() => setVolume(100)}>Включить на максимум</button>
+    </div>
+  );
+}
+```
+
+---
+
+### 2. `useDebounce(value, delay)`
+**Описание:** Хук для искусственной задержки обновления быстроменяющегося значения (например, ввода текста в инпут). Он предотвращает отправку слишком частых запросов на бэкенд (или тяжелых вычислений) на каждый клик или нажатие клавиши. Очищает предыдущий таймер (`clearTimeout`) при каждом новом изменении.
+
+**Пример использования:**
+```javascript
+import React, { useState } from 'react';
+import { useDebounce } from './hooks/useDebounce';
+
+function SearchInput() {
+  const [text, setText] = useState('');
+  // Значение debouncedText изменится только через 500мс после того, как пользователь перестанет печатать
+  const debouncedText = useDebounce(text, 500);
+
+  return (
+    <div>
+      <input type="text" value={text} onChange={(e) => setText(e.target.value)} />
+      <p>Мгновенный ввод: {text}</p>
+      <p>Отложенное значение для API: {debouncedText}</p>
+    </div>
+  );
+}
+```
+
+---
+
+### 3. `useFetch(url)`
+**Описание:** Хук для выполнения асинхронных HTTP-запросов. Управляет тремя состояниями: полученные данные (`data`), статус загрузки (`loading`) и возможная ошибка (`error`). Включает встроенный механизм отмены сетевого запроса (`AbortController`) на случай, если компонент размонтировался или `url` изменился до завершения загрузки.
+
+**Пример использования:**
+```javascript
+import { useFetch } from './hooks/useFetch';
+
+function DogImage() {
+  // Хук сам делает запрос при монтировании и управляет флагами загрузки
+  const { data, loading, error } = useFetch('https://dog.ceo');
+
+  if (loading) return <span>Загрузка картинки...</span>;
+  if (error) return <span>Ошибка: {error}</span>;
+
+  return data ? <img src={data.message} alt="Рандомная собака" /> : null;
+}
+```
